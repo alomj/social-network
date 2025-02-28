@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container d-flex justify-content-center mt-5 mb-5">
+    <div class="card p-4 shadow-lg text-black-50" style="width: 500px;">
+        <h3 class="text-center mb-4">Upload Your Post</h3>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Enter title..." required>
+            </div>
+
+            <div class="mb-3">
+                <label for="file" class="form-label">Upload Photo</label>
+                <input type="file" class="form-control" id="file" name="file" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter description..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Submit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

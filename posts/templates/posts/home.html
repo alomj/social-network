@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <!-- Контент по центру -->
+            <div class="col-md-8 mx-auto">
+                <div class="row row-cols-1 g-4">
+                    {% for post in posts %}
+                        <div class="col d-flex justify-content-center">
+                            <div class="card mb-4" style="width: 400px; height: 400px;">
+                                <div class="card-header text-black-50">{{ post.title }}</div>
+                                <div class="card-body">
+                                    <img src="{{ post.image.url }}" class="img-thumbnail img-fluid"
+                                         style="height: 100%; width: 100%; object-fit: cover"
+                                         alt="{{ post.title }}">
+                                    <p class="card-text text-muted small">{{ post.description }}</p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between px-3 py-2">
+                                        <i class="bi bi-heart text-black-50"></i>
+                                        <i class="bi bi-chat text-black-50"></i>
+                                        <i class="bi bi-send text-black-50"></i>
+                                        <i class="bi bi-bookmark text-black-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container ">
+        <div class="row row-cols-1 g-4">
+            <div class="col-md-3 d-none d-md-block">
+                {% include 'posts/sidebar.html' %}
+            </div>
+{% endblock %}
