@@ -11,9 +11,10 @@ class PostSerializer(serializers.ModelSerializer):
     def validate_title(self, value):
         if not value:
             raise serializers.ValidationError('Title is required')
-        if value.length < 3:
+        if len(value) < 3:
             raise serializers.ValidationError('Title must be at least 3 characters')
         return value
 
     def create(self, validated_data):
-        return Post.objects.create(**validated_data)
+        post = Post.objects.create(**validated_data)
+        return post
