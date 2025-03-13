@@ -16,4 +16,5 @@ class PostSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        return Post.objects.create(**validated_data)
+        post = Post.objects.create(**validated_data)
+        return post
