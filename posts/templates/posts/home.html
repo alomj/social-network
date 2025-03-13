@@ -4,31 +4,57 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <!-- Контент по центру -->
-            <div class="col-md-8 mx-auto">
-                <div class="row row-cols-1 g-4">
-                    {% for post in posts %}
-                        <div class="col d-flex justify-content-center">
-                            <div class="card mb-4" style="width: 400px; height: 400px;">
-                                <div class="card-header text-black-50">{{ post.title }}</div>
-                                <div class="card-body">
-                                    <img src="{{ post.image.url }}" class="img-thumbnail img-fluid"
-                                         style="height: 100%; width: 100%; object-fit: cover"
-                                         alt="{{ post.title }}">
-                                    <p class="card-text text-muted small">{{ post.description }}</p>
+            <div class="col-md-11 mt-4 d-flex justify-content-end">
+                <a class="btn btn-primary" href="{% url 'create_post' %}">Сreate Post</a>
+            </div>
+        </div>
+        <div class="col-md-8 mx-auto">
+            <div class="row row-cols-1 g-4">
+
+                {% for post in posts %}
+                    <div class="col d-flex justify-content-center">
+                        <div class="card mb-4" style="width: 400px; height: 400px;">
+                            <div class="card-header text-black-50 d-flex justify-content-between">
+                                {{ post.title }}
+
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                            id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots"></i>
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-end"
+                                        aria-labelledby="dropdownMenuButton">
+                                        <li><a class="dropdown-item" href="{% url 'edit_post' post.id %}">✏️
+                                            Edit</a></li>
+                                        <li>
+                                            <form action="{% url 'delete_post' post.id %}" method="post">
+                                                {% csrf_token %}
+                                                <button type="submit" class="dropdown-item text-danger">🗑 Delete
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <div class="card-footer">
-                                    <div class="d-flex justify-content-between px-3 py-2">
-                                        <i class="bi bi-heart text-black-50"></i>
-                                        <i class="bi bi-chat text-black-50"></i>
-                                        <i class="bi bi-send text-black-50"></i>
-                                        <i class="bi bi-bookmark text-black-50"></i>
-                                    </div>
+                            </div>
+                            <div class="card-body">
+                                <img src="{{ post.image.url }}" class="img-thumbnail img-fluid"
+                                     style="height: 100%; width: 100%; object-fit: cover"
+                                     alt="{{ post.title }}">
+                                <p class="card-text text-muted small">{{ post.description }}</p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between px-3 py-2">
+                                    <i class="bi bi-heart text-black-50"></i>
+                                    <i class="bi bi-chat text-black-50"></i>
+                                    <i class="bi bi-send text-black-50"></i>
+                                    <i class="bi bi-bookmark text-black-50"></i>
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
+                    </div>
+                {% endfor %}
+                </a>
             </div>
         </div>
     </div>
@@ -37,4 +63,6 @@
             <div class="col-md-3 d-none d-md-block">
                 {% include 'posts/sidebar.html' %}
             </div>
+        </div>
+    </div>
 {% endblock %}
