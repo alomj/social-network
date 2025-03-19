@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from posts.models import Post
+from posts.models import Post, Comment
+from user.serializer import UserSerializer
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -18,3 +19,19 @@ class PostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         post = Post.objects.create(**validated_data)
         return post
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+
+    def validate_comment(self, value):
+        if not value:
+            raise serializers.ValidationError('Title is required')
+
+    def create(self, validated_data):
+        comment = Comment.objects.create(**validated_data)
+        return comment

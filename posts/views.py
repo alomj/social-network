@@ -1,14 +1,22 @@
+from django.core.serializers import serialize
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from posts.models import Post
-from posts.serializer import PostSerializer
+from posts.serializer import PostSerializer, CommentSerializer
 from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, BasePermission
 from .service import PostService
+
+
+class IsOwnerOrReadOnly(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj.user == request.user
 
 
 class PostList(ListAPIView):
@@ -57,7 +65,6 @@ class EditPost(APIView):
             return redirect('list_post')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
     def get(self, request, *args, **kwargs):
         post = self.get_object(kwargs['post_id'])
         serializer = PostSerializer(post)
@@ -65,9 +72,7 @@ class EditPost(APIView):
 
     def post(self, request, *args, **kwargs):
         post = self.get_object(kwargs['post_id'])
-        serializer = PostSerializer(post)
         return self.update(request, post, partial=True)
-
 
     def put(self, request, *args, **kwargs) -> Response | HttpResponseRedirect:
         post = self.get_object(kwargs['post_id'])
@@ -91,3 +96,36 @@ class DeletePost(APIView):
             return Response({"message": "Post deleted"}, status=status.HTTP_204_NO_CONTENT)
         return redirect('list_post')
 
+
+class LikePost(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        post = get_object_or_404(Post, id=self.kwargs['post_id'])
+        user = self.request.user
+        updated = False
+        liked = False
+        if post.likes.filter(id=user.id).exists():
+            liked = False
+            post.likes.remove(user)
+            updated = True
+        else:
+            liked = True
+            post.likes.add(user)
+        data = {
+            'liked': liked,
+            'updated': updated,
+            'likes_count': post.likes.count(),
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+class CommentPost(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        post = get_object_or_404(Post, id=self.kwargs['post_id'])
+        author = self.request.user
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
