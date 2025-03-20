@@ -26,8 +26,8 @@ class User(AbstractUser):
         related_query_name='custom_user',
     )
 
-    def save_avatar(self, *args, **kwargs):
-        if not self.avatar:
+    def save(self, *args, **kwargs):
+        if not self.avatar or self.avatar =="":
             self.avatar = DEFAULT_AVATAR_URL
         super().save(*args, **kwargs)
 

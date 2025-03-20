@@ -7,7 +7,7 @@ from user.serializer import UserSerializer
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = ['title', 'image', 'description']
 
     def validate_title(self, value):
         if not value:
@@ -26,12 +26,26 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ['comment', 'author']
 
     def validate_comment(self, value):
         if not value:
             raise serializers.ValidationError('Title is required')
+        return value
 
     def create(self, validated_data):
-        comment = Comment.objects.create(**validated_data)
-        return comment
+        request = self.context.get('request')
+        post = self.context.get('post')
+        author = self.context.get('author')
+
+        if not post:
+            raise serializers.ValidationError('Post not found')
+
+        if not author:
+            raise serializers.ValidationError('Author not found')
+
+        if not request.user.is_authenticated():
+            raise serializers.ValidationError('You are not authenticated')
+
+        validated_data['post'] = post
+        return super().create(validated_data)

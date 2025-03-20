@@ -24,11 +24,11 @@ class Post(models.Model):
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.TextField()
+    comment = models.TextField(max_length=500)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.author}: {self.comment}"
+        return f"{self.author}: {self.comment}, {self.post_id}"
 
     def get_comments_count(self):
         return self.comment.count()

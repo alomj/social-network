@@ -7,5 +7,5 @@ urlpatterns = [
     path('post/<int:post_id>/edit', EditPost.as_view(), name='edit_post'),
     path('post/<int:post_id>/delete/', DeletePost.as_view(), name='delete_post'),
     path('post/<int:post_id>/like/', LikePost.as_view(), name='like_post'),
-    path('post/<int:post_id>/comment', CommentPost.as_view(), name='comment_post'),
+    path('post/<int:post_id>/comment/', CommentPost.as_view(), name='comment_post'),
 ]
