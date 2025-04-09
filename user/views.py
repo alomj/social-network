@@ -48,7 +48,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             return Response({'error': "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class RegisterAPI(APIView):
+class RegisterUserAPI(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
