@@ -1,10 +1,41 @@
-from rest_framework import serializers
+from rest_framework import serializers, request
 
-from posts.models import Post, Comment
+from posts.models import Post, Comment, Like
 from user.serializer import UserSerializer
+from django.contrib.contenttypes.models import ContentType
+
+
+class ToggleLikeSerializer(serializers.Serializer):
+    CONTENT_TYPE_MAP = ['Post', 'Comment']
+
+    content_type = serializers.CharField()
+    object_id = serializers.IntegerField()
+
+    def validate_content_type(self, value):
+        if value not in self.CONTENT_TYPE_MAP:
+            raise serializers.ValidationError(f'Content type must be one of {", ".join(self.CONTENT_TYPE_MAP)}')
+        return value
+
+    def validate(self, data):
+        try:
+            content_type = ContentType.objects.get(model=data['content_type'].lower())
+            model_class = content_type.model_class()
+            obj = model_class.objects.get(id=data['object_id'])
+        except ContentType.DoesNotExist:
+            raise serializers.ValidationError({'content_type': 'Invalid content type'})
+        except model_class.DoesNotExist:
+            raise serializers.ValidationError({'object_id': 'Object with this ID does not exist'})
+
+        data['content_type'] = content_type
+        data['obj'] = obj
+        data['author'] = self.context['request'].user
+
+        return data
 
 
 class PostSerializer(serializers.ModelSerializer):
+    like = ToggleLikeSerializer(many=True, read_only=True)
+
     class Meta:
         model = Post
         fields = ['title', 'image', 'description']
@@ -44,7 +75,7 @@ class CommentSerializer(serializers.ModelSerializer):
         if not author:
             raise serializers.ValidationError('Author not found')
 
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             raise serializers.ValidationError('You are not authenticated')
 
         validated_data['post'] = post
