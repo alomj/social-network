@@ -92,6 +92,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'debug_toolbar',
     # apps
     'posts',
     'user',
@@ -105,6 +106,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar_force.middleware.ForceDebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'src.urls'
@@ -139,8 +142,6 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL = 'user.User'
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -166,6 +167,10 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/

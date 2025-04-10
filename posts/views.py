@@ -16,14 +16,18 @@ from posts.permissions import IsOwnerOrReadOnly, ReadOnly
 
 class PostList(ListAPIView):
     permission_classes = [ReadOnly]
-    queryset = Post.objects.all_posts()
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'posts/home.html'
     serializer_class = PostSerializer
 
+    def get_queryset(self):
+        return Post.objects.get_likes_and_comment_counts()
+
     def get(self, request, *args, **kwargs):
         posts = self.get_queryset()
-        return render(request, self.template_name, {'posts': posts})
+        return render(request, self.template_name, {
+            'posts': posts,
+        })
 
 
 class PostCreate(APIView):
@@ -34,7 +38,7 @@ class PostCreate(APIView):
         return render(request, self.template_name)
 
     def post(self, request, *args, **kwargs):
-        serializer = PostService.create_post(request.data)
+        serializer = PostService.create_post(request, request.data)
         print(serializer.errors)
         if not serializer.errors:
             return redirect('list_post')

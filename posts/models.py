@@ -23,9 +23,6 @@ class Post(models.Model):
     def __str__(self):
         return f"{self.title}: {self.created} - {self.description}"
 
-    def get_likes_count(self):
-        return self.likes.count()
-
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -35,10 +32,7 @@ class Comment(models.Model):
     likes = GenericRelation('Like', related_name='liked_comments')
 
     def __str__(self):
-        return f"{self.author}: {self.comment}, {self.post_id}"
-
-    def get_comments_count(self):
-        return self.comment.count()
+        return f"{self.author}: {self.id}, {self.comment}, {self.post_id}"
 
 
 class Like(models.Model):
