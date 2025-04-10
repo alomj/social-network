@@ -9,14 +9,14 @@ class LikeService:
         content_type = data['content_type']
         author = data['author']
 
-        like, created = Like.objects.get_or_create(
+        likes, created = Like.objects.get_or_create(
             content_type=content_type,
             object_id=obj.id,
             author=author
         )
 
         if not created:
-            like.delete()
+            likes.delete()
             liked = False
         else:
             liked = True

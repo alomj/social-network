@@ -34,7 +34,6 @@ class ToggleLikeSerializer(serializers.Serializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    like = ToggleLikeSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
@@ -48,7 +47,9 @@ class PostSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        post = Post.objects.create(**validated_data)
+        author = self.context['request'].user
+        post = Post.objects.create(author=author, **validated_data)
+
         return post
 
 

@@ -9,5 +9,6 @@ urlpatterns = [
                   path('post/<int:post_id>/delete/', DeletePost.as_view(), name='delete_post'),
                   path('post/<int:post_id>/comment/', CommentPost.as_view(), name='comment_post'),
                   path('post/<int:post_id>/like/', ToggleLike.as_view(), name='like_post'),
-                  path('post/comment/like/<int:post_id>/', ToggleLike.as_view(), name='like_comment'),
+                  path('post/<int:post_id>/comment/<int:comment_id>/like/', ToggleLike.as_view(),
+                       name='like_comment'),
               ] + debug_toolbar_urls()
