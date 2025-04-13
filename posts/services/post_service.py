@@ -26,18 +26,3 @@ class PostService:
         post.delete()
         return {"message": "Post deleted"}
 
-    @staticmethod
-    def like_post(post, user):
-        liked = False
-        if post.likes.filter(id=user.id).exists():
-            liked = False
-            post.likes.remove(user)
-            updated = True
-        else:
-            liked = True
-            post.likes.add(user)
-        return {
-            'liked': liked,
-            'updated': updated,
-            'likes_count': post.likes.count(),
-        }
