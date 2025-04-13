@@ -10,4 +10,4 @@ class CommentService:
         if serializer.is_valid():
             serializer.save()
             return serializer
-        return serializer,
+        return serializer
