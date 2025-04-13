@@ -17,6 +17,7 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from datetime import timedelta
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -53,12 +54,25 @@ LOGGING = {
     },
 }
 
-
 cloudinary.config(
     cloudinary_url=os.getenv('CLOUDINARY_URL')
 )
 
 DEFAULT_FILE_STORAGE = 'cloudinary.storage.MediaCloudinaryStorage'
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_TIMEZONE = 'Europe/Kiev'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -79,7 +93,6 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
-
 
 # Application definition
 

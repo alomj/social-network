@@ -1,15 +1,15 @@
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework.response import Response
 import logging
-from user.serializer import UserRegistrationSerializer, MyTokenObtainPairSerializer
-
+from user.serializer import UserRegistrationSerializer, MyTokenObtainPairSerializer, ResetPasswordRequestSerializer
+from .service import ResetPasswordService
 logger = logging.getLogger(__name__)
+from .tasks import send_email
+
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -58,4 +58,33 @@ class RegisterUserAPI(APIView):
             return Response({'message': "User created successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    
+
+class ResetPasswordTokenRequest(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email')
+
+        if not email:
+            return Response({'error': 'Email address not provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            token = ResetPasswordService.change_password_request(email)
+
+            send_email.delay(
+                subject='Reset password request',
+                message=f'Reset password request for {email}',
+                recipient_list=[email]
+                )
+
+            return Response({'token': token})
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class ResetPasswordConfirm(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request, *args, **kwargs):
+        try:
+            return ResetPasswordService.change_password_confirm(request)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

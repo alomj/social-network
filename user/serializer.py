@@ -42,3 +42,21 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['password'] = user.password
 
         return token
+
+
+class ResetPasswordRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    new_password = serializers.CharField(required=True)
+    confirm_new_password = serializers.CharField(required=True)
+    token = serializers.CharField(required=True)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_new_password']:
+            raise serializers.ValidationError('Passwords must match')
+        return data
+
+    def validate_email(self, value):
+        if not value:
+            raise serializers.ValidationError('Email cannot be empty')
+        return value
+
