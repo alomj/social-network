@@ -1,22 +1,30 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-import user
 from user.models import User
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ('username', 'email', 'password', 'first_name', 'last_name')
         extra_kwargs = {'password': {'write_only': True}}
 
-    def validate_email(self, value):
+    @staticmethod
+    def validate_username(value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError('Username already exists')
+        return value
+
+
+    @staticmethod
+    def validate_email(value):
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError('Email already registered')
         return value
 
-    def validate_password(self, value):
+    @staticmethod
+    def validate_password(value):
         if len(value) < 8:
             raise serializers.ValidationError('Password must be at least 8 characters')
         return value
@@ -25,11 +33,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         user.save()
         return user
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'avatar')
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -55,7 +58,8 @@ class ResetPasswordRequestSerializer(serializers.Serializer):
             raise serializers.ValidationError('Passwords must match')
         return data
 
-    def validate_email(self, value):
+    @staticmethod
+    def validate_email(value):
         if not value:
             raise serializers.ValidationError('Email cannot be empty')
         return value
