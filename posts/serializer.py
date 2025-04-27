@@ -1,6 +1,6 @@
 from rest_framework import serializers, request
 
-from posts.models import Post, Comment, Like
+from posts.models import Post, Comment
 from user.serializer import UserSerializer
 from django.contrib.contenttypes.models import ContentType
 
@@ -34,10 +34,11 @@ class ToggleLikeSerializer(serializers.Serializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True)
 
     class Meta:
         model = Post
-        fields = ['title', 'image', 'description']
+        fields = ['title', 'image', 'description', 'author']
 
     def validate_title(self, value):
         if not value:
