@@ -4,7 +4,9 @@ from profiles.serializer import CreateProfileSerializer, ProfileSerializer
 from profiles.models import Profile
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
-class ProfileService:
+
+
+class ProfileGetter:
     @staticmethod
     def get_profile(request):
         try:
@@ -14,6 +16,8 @@ class ProfileService:
         except Profile.DoesNotExist:
             raise NotFound(detail='Profile not found', code='404')
 
+
+class ProfileCreator:
     @staticmethod
     def create_profile(data, user):
         serializer = CreateProfileSerializer(data=data, context={'user': user})
@@ -21,16 +25,19 @@ class ProfileService:
         profile = serializer.save()
         return ProfileSerializer(profile)
 
+class ProfileUpdater:
     @staticmethod
-    def update_profile(data, user, request):
+    def update_profile(request):
         profile = Profile.objects.get(user=request.user)
         serializer = ProfileSerializer(data=request.data, instance=profile, partial=True)
         serializer.is_valid(raise_exception=True)
         profile = serializer.save()
         return ProfileSerializer(profile)
 
+
+class ProfileDeleter:
     @staticmethod
-    def delete_profile(data, user, request):
+    def delete_profile(request):
         try:
             profile = Profile.objects.get(user=request.user)
             profile.delete()
