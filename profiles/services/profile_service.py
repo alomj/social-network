@@ -1,7 +1,7 @@
 from profiles.serializer import CreateProfileSerializer, ProfileSerializer
 from profiles.models import Profile
 from rest_framework.exceptions import NotFound
-
+from rest_framework import status
 
 class ProfileGetter:
     @staticmethod
@@ -10,7 +10,7 @@ class ProfileGetter:
             profile = Profile.objects.get_profile_by_user_slug(slug)
             return profile
         except Profile.DoesNotExist:
-            raise NotFound(detail='Profile not found', code='404')
+            raise NotFound(detail='Profile not found', code=status.HTTP_404_NOT_FOUND)
 
 
 class ProfileCreator:
@@ -38,4 +38,4 @@ class ProfileDeleter:
             profile = Profile.objects.get_profile_by_user_slug(request.user)
             profile.delete()
         except Profile.DoesNotExist:
-            raise NotFound(detail='Profile not found', code='404')
+            raise NotFound(detail='Profile not found', code=status.HTTP_404_NOT_FOUND)
