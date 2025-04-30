@@ -1,10 +1,10 @@
 from django.db import models
 
 from posts.models import Post
-from profiles.manager import ProfileManager
 from user.models import User
 from cloudinary.models import CloudinaryField
 from django.utils.text import slugify
+from profiles.manager import ProfileManager
 import os
 
 DEFAULT_AVATAR_URL = os.getenv('DEFAULT_AVATAR_URL')
@@ -24,14 +24,12 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.user.username} Profile '
 
-
     def save(self, *args, **kwargs):
         if not self.avatar or self.avatar == "":
             self.avatar = DEFAULT_AVATAR_URL
         if not self.slug:
             self.slug = slugify(f'{self.user.username}')
         super().save(*args, **kwargs)
-
 
     @property
     def avatar_url(self):
