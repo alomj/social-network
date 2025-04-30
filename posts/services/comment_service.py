@@ -1,4 +1,3 @@
-from posts.models import Comment
 from posts.serializer import CommentSerializer
 
 

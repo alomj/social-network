@@ -14,7 +14,6 @@ class GetProfile(APIView):
 
 class CreateProfile(APIView):
     permission_classes = [IsAuthenticated]
-
     @staticmethod
     def post(request):
         serializer = ProfileCreator.create_profile(user=request.user, data=request.data)
@@ -22,8 +21,6 @@ class CreateProfile(APIView):
 
 
 class EditProfile(APIView):
-
-
     @staticmethod
     def patch(request, slug=None):
         serializer = ProfileUpdater.update_profile(request=request)
