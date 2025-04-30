@@ -1,5 +1,5 @@
 from profiles.serializer import CreateProfileSerializer, ProfileSerializer
-from profiles.models import Profile
+from profiles.models.profile import Profile
 from rest_framework.exceptions import NotFound
 from rest_framework import status
 

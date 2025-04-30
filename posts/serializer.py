@@ -1,6 +1,7 @@
-from rest_framework import serializers, request
+from rest_framework import serializers
 
-from posts.models import Post, Comment
+from posts.models.post import Post
+from posts.models.comment import Comment
 from user.serializer import UserSerializer
 from django.contrib.contenttypes.models import ContentType
 

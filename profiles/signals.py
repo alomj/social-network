@@ -2,7 +2,7 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.core.cache import cache
 
-from profiles.models import Profile
+from profiles.models.profile import Profile
 from user.models import User
 
 @receiver([post_save, post_delete], sender=Profile)

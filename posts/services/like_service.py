@@ -1,4 +1,4 @@
-from posts.models import Like
+from posts.models.like import Like
 from user.serializer import UserSerializer
 
 

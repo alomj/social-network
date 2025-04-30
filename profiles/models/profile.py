@@ -1,6 +1,6 @@
 from django.db import models
 
-from posts.models import Post
+from posts.models.post import Post
 from user.models import User
 from cloudinary.models import CloudinaryField
 from django.utils.text import slugify
@@ -15,8 +15,6 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(max_length=500, blank=True)
     avatar = CloudinaryField('image', blank=True, null=True)
-    followers = models.ManyToManyField(User, related_name='followers', blank=True, related_query_name='follower')
-    following = models.ManyToManyField(User, related_name='following', blank=True, related_query_name='follow')
     posts = models.ManyToManyField(Post, related_name='posts', blank=True, related_query_name='post')
 
     objects = ProfileManager()
@@ -37,3 +35,5 @@ class Profile(models.Model):
             return self.avatar.url
         else:
             return DEFAULT_AVATAR_URL
+
+

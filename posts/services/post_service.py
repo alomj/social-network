@@ -1,4 +1,3 @@
-from posts.models import Post
 from posts.serializer import PostSerializer
 
 

@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
-from posts.models import Post
+from posts.models.post import Post
 from posts.serializer import PostSerializer
-from profiles.models import Profile
+from profiles.models.profile import Profile
 from user.serializer import UserSerializer
 
 
